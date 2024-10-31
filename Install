@@ -7,9 +7,15 @@ grafana/grafana-sampling        1.1.0           v1.3.0                  A Helm c
 
 
 
-[root@k3dserver test]# helm install my-grafana grafana/grafana --namespace monitoring
+
+[root@k3dserver ~]# vi values.yaml
+[root@k3dserver ~]# kubectl create namespace monitoring
+namespace/monitoring created
+[root@k3dserver ~]# helm list -n monitoring
+NAME    NAMESPACE       REVISION        UPDATED STATUS  CHART   APP VERSION
+[root@k3dserver ~]# helm install my-grafana grafana/grafana -f values.yaml -n monitoring
 NAME: my-grafana
-LAST DEPLOYED: Thu Oct 31 21:36:07 2024
+LAST DEPLOYED: Thu Oct 31 23:55:43 2024
 NAMESPACE: monitoring
 STATUS: deployed
 REVISION: 1
@@ -17,6 +23,7 @@ NOTES:
 1. Get your 'admin' user password by running:
 
    kubectl get secret --namespace monitoring my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+NFK0ZRuGd85Iu0MZ2noQo1wrSsdoob7n3Rt0DVCa
 
 
 2. The Grafana server can be accessed via port 80 on the following DNS name from within your cluster:
@@ -28,26 +35,9 @@ NOTES:
      kubectl --namespace monitoring port-forward $POD_NAME 3000
 
 3. Login with the password from step 1 and the username: admin
-#################################################################################
-######   WARNING: Persistence is disabled!!! You will lose your data when   #####
-######            the Grafana pod is terminated.                            #####
-#################################################################################
-[root@k3dserver test]#
-
-[root@k3dserver test]#  kubectl get secret --namespace monitoring my-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
-7kLPbwaAGrEnbuDRSo9v6iiozzZdTf1ackDMXA6s
-[root@k3dserver test]#
-
-my-grafana.monitoring.svc.cluster.local
+[root@k3dserver ~]#
 
 
-[root@k3dserver test]#  export POD_NAME=$(kubectl get pods --namespace monitoring -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=my-grafana" -o jsonpath="{.items[0].metadata.name}")
-[root@k3dserver test]# kubectl --namespace monitoring port-forward $POD_NAME 3000 &
-[2] 13489
-[root@k3dserver test]# Forwarding from 127.0.0.1:3000 -> 3000
-Forwarding from [::1]:3000 -> 3000
-
-[root@k3dserver test]#
 
 
 
